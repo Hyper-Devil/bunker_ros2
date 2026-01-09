@@ -24,7 +24,7 @@ void DetachRobot(int signal) {
   (void)signal;
   robot->Stop();
 }
-
+ 
 int main(int argc, char **argv) {
   // setup ROS node
   rclcpp::init(argc, argv);

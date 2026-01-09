@@ -105,27 +105,28 @@ class BunkerMessenger {
 
     auto actuator = bunker_->GetActuatorState();
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 3; ++i) {
       // actuator_hs_state
       uint8_t motor_id = actuator.actuator_hs_state[i].motor_id;
-
-      status_msg.actuator_states[motor_id].rpm =
+      status_msg.actuator_states[i].motor_id = 
+          actuator.actuator_hs_state[i].motor_id;
+      status_msg.actuator_states[i].rpm =
           actuator.actuator_hs_state[i].rpm;
-      status_msg.actuator_states[motor_id].current =
+      status_msg.actuator_states[i].current =
           actuator.actuator_hs_state[i].current;
-      status_msg.actuator_states[motor_id].pulse_count =
+      status_msg.actuator_states[i].pulse_count =
           actuator.actuator_hs_state[i].pulse_count;
 
       // actuator_ls_state
       motor_id = actuator.actuator_ls_state[i].motor_id;
 
-      status_msg.actuator_states[motor_id].driver_voltage =
+      status_msg.actuator_states[i].driver_voltage =
           actuator.actuator_ls_state[i].driver_voltage;
-      status_msg.actuator_states[motor_id].driver_temperature =
+      status_msg.actuator_states[i].driver_temperature =
           actuator.actuator_ls_state[i].driver_temp;
-      status_msg.actuator_states[motor_id].motor_temperature =
+      status_msg.actuator_states[i].motor_temperature =
           actuator.actuator_ls_state[i].motor_temp;
-      status_msg.actuator_states[motor_id].driver_state =
+      status_msg.actuator_states[i].driver_state =
           actuator.actuator_ls_state[i].driver_state;
     }
 
