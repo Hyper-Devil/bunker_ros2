@@ -36,6 +36,8 @@ class BunkerMessenger {
   void SetOdometryFrame(std::string frame) { odom_frame_ = frame; }
   void SetBaseFrame(std::string frame) { base_frame_ = frame; }
   void SetOdometryTopicName(std::string name) { odom_topic_name_ = name; }
+  void SetPublishOdometry(bool publish_odom) { publish_odom_ = publish_odom; }
+  void SetPublishTf(bool publish_tf) { publish_tf_ = publish_tf; }
 
   void SetSimulationMode(int loop_rate) {
     simulated_robot_ = true;
@@ -43,9 +45,11 @@ class BunkerMessenger {
   }
 
   void SetupSubscription() {
-    // odometry publisher
-    odom_pub_ =
+    // Optional odometry publisher to avoid conflicts with external SLAM odom.
+    if (publish_odom_) {
+      odom_pub_ =
         node_->create_publisher<nav_msgs::msg::Odometry>(odom_topic_name_, 50);
+    }
     status_pub_ = node_->create_publisher<bunker_msgs::msg::BunkerStatus>(
         "/bunker_status", 10);
     rc_status_pub_ = node_->create_publisher<bunker_msgs::msg::BunkerRCState>(
@@ -60,7 +64,9 @@ class BunkerMessenger {
     //     std::bind(&BunkerMessenger::LightCmdCallback, this,
     //               std::placeholders::_1));
 
-    tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+    if (publish_tf_) {
+      tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+    }
   }
 
   void PublishStateToROS() {
@@ -147,6 +153,8 @@ class BunkerMessenger {
   std::string odom_frame_;
   std::string base_frame_;
   std::string odom_topic_name_;
+  bool publish_odom_ = true;
+  bool publish_tf_ = true;
 
   bool simulated_robot_ = false;
   int sim_control_rate_ = 50;
@@ -227,7 +235,9 @@ class BunkerMessenger {
     tf_msg.transform.translation.z = 0.0;
     tf_msg.transform.rotation = odom_quat;
 
-    tf_broadcaster_->sendTransform(tf_msg);
+    if (publish_tf_ && tf_broadcaster_) {
+      tf_broadcaster_->sendTransform(tf_msg);
+    }
 
     // publish odometry and tf messages
     nav_msgs::msg::Odometry odom_msg;
@@ -244,7 +254,9 @@ class BunkerMessenger {
     odom_msg.twist.twist.linear.y = 0.0;
     odom_msg.twist.twist.angular.z = angular_speed;
 
-    odom_pub_->publish(odom_msg);
+    if (publish_odom_ && odom_pub_) {
+      odom_pub_->publish(odom_msg);
+    }
   }
 };
 }  // namespace westonrobot

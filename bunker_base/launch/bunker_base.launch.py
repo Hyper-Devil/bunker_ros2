@@ -19,8 +19,12 @@ def generate_launch_description():
                                            description='Odometry frame id')
     base_link_frame_arg = DeclareLaunchArgument('base_frame', default_value='base_link',
                                                 description='Base link frame id')
-    odom_topic_arg = DeclareLaunchArgument('odom_topic_name', default_value='odom',
+    odom_topic_arg = DeclareLaunchArgument('odom_topic_name', default_value='bunker_odom',
                                            description='Odometry topic name')
+    publish_odom_arg = DeclareLaunchArgument('publish_odom', default_value='true',
+                                             description='Whether to publish odometry topic')
+    publish_tf_arg = DeclareLaunchArgument('publish_tf', default_value='false',
+                                           description='Whether to publish odom->base TF')
     is_bunker_mini_arg = DeclareLaunchArgument('is_bunker_mini', default_value='false',
                                           description='Scout mini model')
     simulated_robot_arg = DeclareLaunchArgument('simulated_robot', default_value='false',
@@ -39,6 +43,8 @@ def generate_launch_description():
                 'odom_frame': launch.substitutions.LaunchConfiguration('odom_frame'),
                 'base_frame': launch.substitutions.LaunchConfiguration('base_frame'),
                 'odom_topic_name': launch.substitutions.LaunchConfiguration('odom_topic_name'),
+                'publish_odom': launch.substitutions.LaunchConfiguration('publish_odom'),
+                'publish_tf': launch.substitutions.LaunchConfiguration('publish_tf'),
                 'is_bunker_mini': launch.substitutions.LaunchConfiguration('is_bunker_mini'),
                 'simulated_robot': launch.substitutions.LaunchConfiguration('simulated_robot'),
                 'control_rate': launch.substitutions.LaunchConfiguration('control_rate'),
@@ -50,6 +56,8 @@ def generate_launch_description():
         odom_frame_arg,
         base_link_frame_arg,
         odom_topic_arg,
+        publish_odom_arg,
+        publish_tf_arg,
         is_bunker_mini_arg,
         simulated_robot_arg,
         sim_control_rate_arg,
